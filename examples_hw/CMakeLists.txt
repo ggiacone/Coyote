@@ -261,7 +261,7 @@ if(EXAMPLE STREQUAL "perf_GEMM")
     validation_checks_hw()
 
     load_apps (
-        VFPGA_C0_0 "apps/ternary_GEMM"
+        VFPGA_C0_0 "apps/perf_GEMM"
     )
 
     create_hw()
