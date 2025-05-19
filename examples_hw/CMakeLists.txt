@@ -250,7 +250,7 @@ endif()
 # @note: Add a target device (FDEV_NAME)
 #
 
-if(EXAMPLE STREQUAL "ternary_GEMM")
+if(EXAMPLE STREQUAL "perf_GEMM")
    # which configuration do I need?
     set(EN_HLS 0)
     set(EN_STRM 1)
