@@ -243,3 +243,27 @@ if(EXAMPLE STREQUAL "perf_fpga")
 
     create_hw()
 endif()
+
+#
+# Perf TernaryGEMM
+#
+# @note: Add a target device (FDEV_NAME)
+#
+
+if(EXAMPLE STREQUAL "ternary_GEMM")
+   # which configuration do I need?
+    set(EN_HLS 0)
+    set(EN_STRM 1)
+    set(EN_BPSS 1)
+    set(N_STRM_AXI 2)
+    set(HBM_BPSS 1)
+
+    validation_checks_hw()
+
+    load_apps (
+        VFPGA_C0_0 "apps/ternary_GEMM"
+    )
+
+    create_hw()
+endif()
+
