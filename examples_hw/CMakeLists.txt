@@ -250,13 +250,12 @@ endif()
 # @note: Add a target device (FDEV_NAME)
 #
 if(EXAMPLE STREQUAL "perf_GEMM")
-    set(EN_HLS 0)
-    set(EN_STRM 1)
-    set(EN_BPSS 1)
+    set(EN_STRM 0)
+    set(N_REGIONS 1)
+    #set(N_STRM_AXI 1)
     set(EN_MEM 1)
+    set(N_CARD_AXI 1)
     set(EN_ACLK 1)
-    set(N_CARD_AXI 2)
-    set(N_MEM_CHAN 2)
 
     validation_checks_hw()
     
@@ -267,3 +266,25 @@ if(EXAMPLE STREQUAL "perf_GEMM")
     create_hw()
 endif()
 
+#
+# Perf Test
+#
+# @note: Add a target device (FDEV_NAME)
+#
+if(EXAMPLE STREQUAL "perf_test")
+    set(EN_STRM 0)
+    set(N_REGIONS 1)
+    #set(N_STRM_AXI 1)
+    set(EN_MEM 1)
+    set(N_CARD_AXI 1)
+    set(EN_ACLK 1)
+
+
+    validation_checks_hw()
+    
+    load_apps (
+        VFPGA_C0_0 "apps/perf_test"
+    )
+
+    create_hw()
+endif()
