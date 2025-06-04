@@ -112,4 +112,4 @@ ila_0 inst_ila_test (
   .probe17(axis_card_send[0].tdata),       // 160 bits
   .probe18(axis_card_send[0].tvalid),      // 1 bit
   .probe19(axis_card_send[0].tready)       // 1 bit
-)
+);
