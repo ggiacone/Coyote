@@ -36,9 +36,9 @@ u_int size = (uint) 10 * (uint) sizeof(uint16_t);
 
 // Create a Coyote thread and allocate memory for the vectors
 std::unique_ptr<cThread<std::any>> coyote_thread(new cThread<std::any>(DEFAULT_VFPGA_ID, getpid(), 0));
-uint16_t *X = (uint16_t *)coyote_thread->getMem({CoyoteAlloc::HPF, size});
+uint16_t *X = (uint16_t *) coyote_thread->getMem({CoyoteAlloc::HPF, size});
 uint16_t *W = (uint16_t *) coyote_thread->getMem({CoyoteAlloc::HPF, size});
-uint16_t *Y = (uint16_t *)coyote_thread->getMem({CoyoteAlloc::HPF, size});
+uint16_t *Y = (uint16_t *) coyote_thread->getMem({CoyoteAlloc::HPF, size});
 if(!X || !W || !Y){ throw std::runtime_error("Could not allocate memory; exiting...");}
 
 
@@ -101,6 +101,10 @@ for (size_t i = 0; i < 10; i++)
     std::cout << "Y[" << i << "] = " << Y[i] << std::endl;
 }
 
+// Free Memory
+coyote_thread->freeMem(X);
+coyote_thread->freeMem(W);
+coyote_thread->freeMem(Y);
 
 return EXIT_SUCCESS;
 }
