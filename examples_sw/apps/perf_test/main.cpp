@@ -13,6 +13,9 @@
 
 // Coyote-specific includes
 #include "cThread.hpp"
+using namespace fpga;
+
+
 
 // Default vFPGA to assign cThreads to
 #define DEFAULT_VFPGA_ID 0
@@ -33,10 +36,10 @@ u_int number_elem = 10;
 u_int size = number_elem * (uint) sizeof(uint16_t);
 
 // Create a Coyote thread and allocate memory for the vectors
-std::unique_ptr<coyote::cThread<std::any>> coyote_thread(new coyote::cThread<std::any>(DEFAULT_VFPGA_ID, getpid(), 0));
-uint16_t *X = (uint16_t *)coyote_thread->getMem({coyote::CoyoteAlloc::HPF, number_elem});
-uint16_t *W = (uint16_t *) coyote_thread->getMem({coyote::CoyoteAlloc::HPF, number_elem});
-uint16_t *Y = (uint16_t *)coyote_thread->getMem({coyote::CoyoteAlloc::HPF, number_elem});
+std::unique_ptr<cThread<std::any>> coyote_thread(new cThread<std::any>(DEFAULT_VFPGA_ID, getpid(), 0));
+uint16_t *X = (uint16_t *)coyote_thread->getMem({CoyoteAlloc::HPF, number_elem});
+uint16_t *W = (uint16_t *) coyote_thread->getMem({CoyoteAlloc::HPF, number_elem});
+uint16_t *Y = (uint16_t *)coyote_thread->getMem({CoyoteAlloc::HPF, number_elem});
 if(!X || !W || !Y){ throw std::runtime_error("Could not allocate memory; exiting...");}
 
 
@@ -49,41 +52,49 @@ for (size_t i = 0; i < 10; i++)
 }
 
 // Create sg_entries
- coyote::sgEntry sg_offload_X;
- coyote::sgEntry sg_offload_W;
- coyote::sgEntry sg_Y;
+ sgEntry sg_offload_X;
+ sgEntry sg_offload_W;
+ sgEntry sg_Y;
 
 
 // LOCAL_OFFLOAD
-sg_offload_X.sync = {.addr = X .size = size };
-sg_offload_W.sync = {.addr = W .size = size };
+sg_offload_X.sync.addr = X ;
+//sg_offload_X.sync.size = size;
 
-coyote_thread->invoke(coyote::CoyoteOper::LOCAL_OFFLOAD,  &sg_offload_X);
-coyote_thread->invoke(coyote::CoyoteOper::LOCAL_OFFLOAD,  &sg_offload_W);
+sg_offload_W.sync.addr = W;
+//sg_offload_W.sync.size = size;
+
+coyote_thread->invoke(CoyoteOper::LOCAL_OFFLOAD,  &sg_offload_X);
+coyote_thread->invoke(CoyoteOper::LOCAL_OFFLOAD,  &sg_offload_W);
 
 // Wait until transfer is done
-while (coyote_thread->checkCompleted(coyote::CoyoteOper::LOCAL_OFFLOAD) != 2) {}
+while (coyote_thread->checkCompleted(CoyoteOper::LOCAL_OFFLOAD) != 2) {};
 
 // Set registers
 std::cout << "Setting CSR: ADDR_X = " << ADDR_X << ", Value = " << X << std::endl;
-coyote_thread->setCSR(X,ADDR_X)
+coyote_thread->setCSR((uint64_t)X,ADDR_X);
 std::cout << "Setting CSR: ADDR_W = " << ADDR_W << ", Value = " << W << std::endl;
-coyote_thread->setCSR(W,ADDR_W)
+coyote_thread->setCSR((uint64_t)W,ADDR_W);
 std::cout << "Setting CSR: ADDR_Y = " << ADDR_Y << ", Value = " << Y << std::endl;
-coyote_thread->setCSR(Y,ADDR_Y)
+coyote_thread->setCSR((uint64_t)Y,ADDR_Y);
 std::cout << "Starting kernel: START = " << START << ", Value = " << 1 << std::endl;
-coyote_thread->setCSR(1,START)
+coyote_thread->setCSR(1,START);
 
 // wait until Done
-while (coyote_thread->getCSR(DONE) != 1) {}
+while (coyote_thread->getCSR(DONE) != 1) {};
 
-std::cout << "Done Signal is high" << std::endl
+std::cout << "Done Signal is high" << std::endl;
 
 // LOCAL_SYNC
-sg_Y.sync = {.addr = Y .size = size };
-coyote_thread->invoke(coyote::CoyoteOper::LOCAL_SYNC,  &sg_Y);
+sg_Y.sync.addr = Y;
+//sg_Y.sync.size = size; 
+
+
+coyote_thread->invoke(CoyoteOper::LOCAL_SYNC,  &sg_Y);
+
+
 // wait until done
-while(coyote_thread->checkCompleted(coyote::CoyoteOper::LOCAL_SYNC) != 1 ){}
+while(coyote_thread->checkCompleted(CoyoteOper::LOCAL_SYNC) != 1 ){} ;
 
 // Read out Y-Vector
 for (size_t i = 0; i < 10; i++)
@@ -92,5 +103,5 @@ for (size_t i = 0; i < 10; i++)
 }
 
 
-return EXIT_SUCCESS
+return EXIT_SUCCESS;
 }
