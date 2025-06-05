@@ -97,6 +97,16 @@ if(EXAMPLE STREQUAL "tcp_iperf")
     message("**  Example: TCP - iperf")
 endif()
 
+if(EXAMPLE STREQUAL "perf_test")
+    set(TARGET_DIR "${CYT_DIR}/examples_sw/apps/perf_test")
+    message("** Test Logic Matrix Addition")
+endif()
+
+if(EXAMPLE STREQUAL "perf_GEMM")
+    set(TARGET_DIR "${CYT_DIR}/examples_sw/apps/perf_GEMM")
+    message("** GEMM Accelerator")
+endif()
+
 #
 # Create build targets
 #
