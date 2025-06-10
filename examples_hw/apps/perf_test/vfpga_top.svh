@@ -86,12 +86,12 @@ testLogic inst_test_Logic (
   .io_axis_card_send_tlast(axis_card_send[0].tlast),
   .io_axis_card_send_tvalid(axis_card_send[0].tvalid),
   .io_axis_card_send_tready(axis_card_send[0].tready),
-  .clk(clk),
-  .resetn(resetn)
+  .clk(aclk),
+  .resetn(aresetn)
 );
 
 ila_0 inst_ila_test (
-  .clk(clk),
+  .clk(aclk),
   .probe0(axi_ctrl.awvalid),               // 1 bit
   .probe1(axi_ctrl.awready),               // 1 bit
   .probe2(axi_ctrl.awaddr),                // 8 bits
